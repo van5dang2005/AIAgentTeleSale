@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nha Khoa ABC — Tư vấn trực tuyến</title>
+<style>
+  :root{
+    --cream:#FAF7F2;
+    --ink:#1F2A2E;
+    --teal:#2D7A6E;
+    --teal-dark:#235F56;
+    --teal-pale:#E3F1ED;
+    --line:#E4DFD6;
+    --muted:#7A7670;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:"Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px;
+  }
+
+  .app{
+    width:100%;
+    max-width:480px;
+    height:min(720px, 92vh);
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 1px 2px rgba(31,42,46,0.04), 0 16px 40px rgba(31,42,46,0.12);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+
+  /* Header */
+  .header{
+    background:var(--teal);
+    color:#fff;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .header .badge{
+    width:42px; height:42px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.16);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+    flex-shrink:0;
+  }
+  .header h1{
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:17px;
+    margin:0;
+    letter-spacing:0.2px;
+  }
+  .header p{
+    margin:2px 0 0;
+    font-size:12.5px;
+    opacity:0.85;
+  }
+  .header .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:#7CE3C8;
+    display:inline-block;
+    margin-right:6px;
+    box-shadow:0 0 0 0 rgba(124,227,200,0.7);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(124,227,200,0.55);}
+    70%{box-shadow:0 0 0 6px rgba(124,227,200,0);}
+    100%{box-shadow:0 0 0 0 rgba(124,227,200,0);}
+  }
+
+  /* Messages */
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    background:
+      radial-gradient(circle at 12% 8%, var(--teal-pale) 0%, transparent 38%),
+      var(--cream);
+  }
+  .messages::-webkit-scrollbar{width:6px;}
+  .messages::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+
+  .row{display:flex; gap:8px; max-width:88%;}
+  .row.user{align-self:flex-end; flex-direction:row-reverse;}
+  .row.bot{align-self:flex-start;}
+
+  .avatar{
+    width:28px; height:28px; border-radius:50%;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px;
+    background:var(--teal-pale);
+    color:var(--teal-dark);
+  }
+  .row.user .avatar{background:var(--ink); color:#fff;}
+
+  .bubble{
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:14.5px;
+    line-height:1.5;
+    white-space:pre-wrap;
+  }
+  .row.bot .bubble{
+    background:#fff;
+    border:1px solid var(--line);
+    border-top-left-radius:4px;
+    color:var(--ink);
+  }
+  .row.user .bubble{
+    background:var(--teal);
+    color:#fff;
+    border-top-right-radius:4px;
+  }
+
+  .typing{
+    display:flex; gap:4px; padding:12px 14px;
+    background:#fff; border:1px solid var(--line);
+    border-radius:14px; border-top-left-radius:4px;
+    width:fit-content;
+  }
+  .typing span{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--muted);
+    animation:bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2){animation-delay:0.15s;}
+  .typing span:nth-child(3){animation-delay:0.3s;}
+  @keyframes bounce{
+    0%,60%,100%{transform:translateY(0); opacity:0.5;}
+    30%{transform:translateY(-4px); opacity:1;}
+  }
+
+  .quick{
+    display:flex; flex-wrap:wrap; gap:6px;
+    padding:0 20px 14px;
+  }
+  .quick button{
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--teal-dark);
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background 0.15s, border-color 0.15s;
+  }
+  .quick button:hover{background:var(--teal-pale); border-color:var(--teal);}
+
+  /* Input */
+  .composer{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    padding:14px 16px;
+    border-top:1px solid var(--line);
+    background:#fff;
+  }
+  .composer textarea{
+    flex:1;
+    resize:none;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 14px;
+    font-size:14.5px;
+    font-family:inherit;
+    max-height:90px;
+    outline:none;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .composer textarea:focus{border-color:var(--teal);}
+  .composer button{
+    width:42px; height:42px;
+    border-radius:50%;
+    border:none;
+    background:var(--teal);
+    color:#fff;
+    font-size:17px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s, transform 0.1s;
+  }
+  .composer button:hover{background:var(--teal-dark);}
+  .composer button:active{transform:scale(0.94);}
+  .composer button:disabled{background:var(--line); cursor:not-allowed;}
+
+  .footer-note{
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    padding:6px 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="badge">🦷</div>
+    <div>
+      <h1>Nha Khoa ABC</h1>
+      <p><span class="dot"></span>Trợ lý tư vấn — đang trực tuyến</p>
+    </div>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="quick" id="quickReplies">
+    <button data-msg="Em muốn hỏi giá tẩy trắng răng">Giá tẩy trắng răng</button>
+    <button data-msg="Em muốn đặt lịch khám">Đặt lịch khám</button>
+    <button data-msg="Niềng răng có đau không?">Niềng răng có đau không?</button>
+    <button data-msg="Phòng khám có làm việc Chủ nhật không?">Giờ làm việc</button>
+  </div>
+
+  <div class="composer">
+    <textarea id="input" placeholder="Nhập tin nhắn..." rows="1"></textarea>
+    <button id="sendBtn" aria-label="Gửi">➤</button>
+  </div>
+  <div class="footer-note">Tư vấn AI — vui lòng đến khám trực tiếp để được bác sĩ chẩn đoán chính xác.</div>
+</div>
+
+<script>
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('input');
+  const sendBtn = document.getElementById('sendBtn');
+  const quickRepliesEl = document.getElementById('quickReplies');
+
+  // Lay hoac tao customerId, luu trong bien JS (khong dung localStorage trong artifact demo;
+  // khi tu host rieng, ban co the doi sang localStorage de nho khach qua nhieu lan truy cap)
+  let customerId = null;
+
+  function addMessage(role, text) {
+    const row = document.createElement('div');
+    row.className = 'row ' + (role === 'user' ? 'user' : 'bot');
+
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    avatar.textContent = role === 'user' ? '🙂' : '🦷';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return row;
+  }
+
+  function showTyping() {
+    const row = document.createElement('div');
+    row.className = 'row bot';
+    row.id = 'typingRow';
+    row.innerHTML = `
+      <div class="avatar">🦷</div>
+      <div class="typing"><span></span><span></span><span></span></div>
+    `;
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function hideTyping() {
+    const row = document.getElementById('typingRow');
+    if (row) row.remove();
+  }
+
+  async function sendMessage(text) {
+    if (!text.trim()) return;
+    addMessage('user', text);
+    inputEl.value = '';
+    sendBtn.disabled = true;
+    showTyping();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, customerId }),
+      });
+      const data = await res.json();
+      hideTyping();
+
+      if (data.customerId) customerId = data.customerId;
+
+      if (data.error) {
+        addMessage('bot', 'Xin lỗi, hệ thống đang gặp sự cố. Anh/chị vui lòng thử lại sau ít phút nhé!');
+      } else {
+        addMessage('bot', data.reply);
+      }
+    } catch (err) {
+      hideTyping();
+      addMessage('bot', 'Không thể kết nối đến server. Vui lòng kiểm tra lại kết nối.');
+      console.error(err);
+    } finally {
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(inputEl.value);
+    }
+  });
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 90) + 'px';
+  });
+
+  quickRepliesEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    sendMessage(btn.dataset.msg);
+  });
+
+  // Loi chao mo dau
+  window.addEventListener('DOMContentLoaded', () => {
+    addMessage('bot', 'Chào anh/chị! Em là trợ lý tư vấn của Nha Khoa ABC 🦷\nAnh/chị đang quan tâm dịch vụ nào, hoặc cần em tư vấn giúp gì không?');
+  });
+</script>
+
+</body>
+</html>
